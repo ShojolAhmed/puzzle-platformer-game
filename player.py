@@ -23,39 +23,78 @@ class Player:
         self.facing_right = True
         self.moving = False
 
-    def update(self):
+        # self.rect = pygame.Rect(self.x, self.y, self.image.get_width(), self.image.get_height())
+        self.rect = pygame.Rect(self.x, self.y, 10 * settings.SCALE, 12 * settings.SCALE)
+    
+    def handle_events(self, event):
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_SPACE and self.on_ground:
+                self.vel_y = settings.JUMP_FORCE
+                self.on_ground = False
+                self.moving = True
+
+    def isMoving(self):
+        if self.vel_x > 1 or self.vel_x < -1:
+            return True
+        return False
+
+    def update(self, tiles):
         keys = pygame.key.get_pressed()
 
-        self.vel_x = 0
+        # self.vel_x = 0
         self.moving = False
 
         if keys[pygame.K_a] or keys[pygame.K_LEFT]:
             self.vel_x = -settings.SPEED
             self.facing_right = False
             self.moving = True
-        if keys[pygame.K_d] or keys[pygame.K_RIGHT]:
+        elif keys[pygame.K_d] or keys[pygame.K_RIGHT]:
             self.vel_x = settings.SPEED
             self.facing_right = True
             self.moving = True
+        else:
+            if self.on_ground:
+                self.vel_x *= 0.7
+            else:
+                self.vel_x *= 0.95
+        print(self.vel_y)
 
-        if keys[pygame.K_SPACE] and self.on_ground:
-            self.vel_y = settings.JUMP_FORCE
-            self.on_ground = False
+        # if keys[pygame.K_SPACE] and self.on_ground:
+        #     self.vel_y = settings.JUMP_FORCE
+        #     self.on_ground = False
 
         self.vel_y += settings.GRAVITY
 
-        self.x += self.vel_x
-        self.y += self.vel_y
+        # Horizontal Collisions
+        self.rect.x += self.vel_x
+        for tile in tiles:
+            if self.rect.colliderect(tile.rect):
+                if self.vel_x > 0:  # moving right
+                    self.rect.right = tile.rect.left
+                elif self.vel_x < 0:  # moving left
+                    self.rect.left = tile.rect.right
+        
+        # Vertical Collisions
+        self.rect.y += self.vel_y
+        self.on_ground = False
+        for tile in tiles:
+            if self.rect.colliderect(tile.rect):
+                if self.vel_y > 0:  # falling
+                    self.rect.bottom = tile.rect.top
+                    self.vel_y = 0
+                    self.on_ground = True
 
-        if self.y >= settings.GROUND_Y:
-            self.y = settings.GROUND_Y
-            self.vel_y = 0
-            self.on_ground = True
+                elif self.vel_y < 0:  # hitting ceiling
+                    self.rect.top = tile.rect.bottom
+                    self.vel_y = 0
+
+        self.x = self.rect.x
+        self.y = self.rect.y
 
         self.animate()
 
     def animate(self):
-        frames = self.run_frames if self.moving else self.idle_frames
+        frames = self.run_frames if self.isMoving() else self.idle_frames
         self.frame_index += self.animation_speed
         if self.frame_index >= len(frames):
             self.frame_index = 0
@@ -65,4 +104,6 @@ class Player:
             self.image = pygame.transform.flip(self.image, True, False)
 
     def draw(self, screen):
-        screen.blit(self.image, (self.x, self.y))
+        # pygame.draw.rect(screen, (255,0,0), self.rect, 2)
+        # screen.blit(self.image, self.rect)
+        screen.blit(self.image, (self.rect.x - 11 * settings.SCALE, self.rect.y - 20 * settings.SCALE))
