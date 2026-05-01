@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.12.1" orientation="orthogonal" renderorder="right-down" width="24" height="14" tilewidth="16" tileheight="16" infinite="0" nextlayerid="3" nextobjectid="1">
+<map version="1.10" tiledversion="1.12.1" orientation="orthogonal" renderorder="right-down" width="24" height="14" tilewidth="16" tileheight="16" infinite="0" nextlayerid="6" nextobjectid="9">
  <editorsettings>
   <export target="testMap.tmj" format="json"/>
  </editorsettings>
@@ -40,4 +40,14 @@
 27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27
 </data>
  </layer>
+ <objectgroup id="3" name="Keys">
+  <object id="1" name="key" gid="61" x="272" y="64" width="16" height="16"/>
+ </objectgroup>
+ <objectgroup id="5" name="PlayerSpawn">
+  <object id="7" name="spawn" x="32" y="160"/>
+ </objectgroup>
+ <objectgroup id="4" name="Doors">
+  <object id="3" name="door" gid="125" x="368" y="160" width="16" height="16"/>
+  <object id="4" name="door" gid="126" x="368" y="176" width="16" height="16"/>
+ </objectgroup>
 </map>

@@ -22,6 +22,7 @@ class Player:
         self.on_ground = False
         self.facing_right = True
         self.moving = False
+        self.has_key = False
 
         # self.rect = pygame.Rect(self.x, self.y, self.image.get_width(), self.image.get_height())
         self.rect = pygame.Rect(self.x, self.y, 10 * settings.SCALE, 12 * settings.SCALE)
@@ -33,12 +34,12 @@ class Player:
                 self.on_ground = False
                 self.moving = True
 
-    def isMoving(self):
+    def is_moving(self):
         if self.vel_x > 1 or self.vel_x < -1:
             return True
         return False
 
-    def update(self, tiles):
+    def update(self, tiles, map_width, map_height):
         keys = pygame.key.get_pressed()
 
         # self.vel_x = 0
@@ -57,7 +58,7 @@ class Player:
                 self.vel_x *= 0.7
             else:
                 self.vel_x *= 0.95
-        print(self.vel_y)
+        # print(self.vel_y)
 
         # if keys[pygame.K_SPACE] and self.on_ground:
         #     self.vel_y = settings.JUMP_FORCE
@@ -91,10 +92,30 @@ class Player:
         self.x = self.rect.x
         self.y = self.rect.y
 
+        # Prevent falling below map
+        # if self.rect.bottom > map_height:
+        #     self.rect.bottom = map_height
+        #     self.vel_y = 0
+        #     self.on_ground = True
+
+        # Prevent going above map
+        if self.rect.top < 0:
+            self.rect.top = 0
+            self.vel_y = 0
+
+        # Prevent going outside left/right
+        if self.rect.left < 0:
+            self.rect.left = 0
+            self.vel_x = 0
+
+        if self.rect.right > map_width:
+            self.rect.right = map_width
+            self.vel_x = 0
+
         self.animate()
 
     def animate(self):
-        frames = self.run_frames if self.isMoving() else self.idle_frames
+        frames = self.run_frames if self.is_moving() else self.idle_frames
         self.frame_index += self.animation_speed
         if self.frame_index >= len(frames):
             self.frame_index = 0
