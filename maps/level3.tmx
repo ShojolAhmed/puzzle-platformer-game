@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.12.1" orientation="orthogonal" renderorder="right-down" width="24" height="14" tilewidth="16" tileheight="16" infinite="0" nextlayerid="9" nextobjectid="12">
+<map version="1.10" tiledversion="1.12.1" orientation="orthogonal" renderorder="right-down" width="24" height="14" tilewidth="16" tileheight="16" infinite="0" nextlayerid="9" nextobjectid="15">
  <tileset firstgid="1" source="tilesheet1.tsx"/>
  <layer id="1" name="Background" width="24" height="14">
   <data encoding="csv">
@@ -59,25 +59,25 @@
   <object id="5" x="48" y="203" width="288" height="5.25686"/>
  </objectgroup>
  <objectgroup id="8" name="MovingPlatforms">
-  <object id="8" gid="4" x="192" y="128" width="16" height="16">
-   <properties>
-    <property name="axis" value="x"/>
-    <property name="range" type="int" value="12"/>
-    <property name="speed" value="2"/>
-   </properties>
-  </object>
-  <object id="10" gid="3" x="176" y="128" width="16" height="16">
+  <object id="12" gid="281" x="176" y="128" width="16" height="16">
    <properties>
     <property name="axis" value="x"/>
     <property name="range" type="int" value="12"/>
     <property name="speed" type="int" value="2"/>
    </properties>
   </object>
-  <object id="11" gid="5" x="208" y="128" width="16" height="16">
+  <object id="13" gid="282" x="192" y="128" width="16" height="16">
    <properties>
     <property name="axis" value="x"/>
     <property name="range" type="int" value="12"/>
-    <property name="speed" value="2"/>
+    <property name="speed" type="int" value="2"/>
+   </properties>
+  </object>
+  <object id="14" gid="283" x="208" y="128" width="16" height="16">
+   <properties>
+    <property name="axis" value="x"/>
+    <property name="range" type="int" value="12"/>
+    <property name="speed" type="int" value="2"/>
    </properties>
   </object>
  </objectgroup>

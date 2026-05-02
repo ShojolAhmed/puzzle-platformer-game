@@ -1,3 +1,5 @@
+DEBUG = True
+
 WIDTH = 960
 HEIGHT = 540
 
