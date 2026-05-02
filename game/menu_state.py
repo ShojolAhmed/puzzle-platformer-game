@@ -1,5 +1,6 @@
 from game.ui.button import Button
 import pygame
+import ui_text as ui
 
 
 class MenuState:
@@ -21,22 +22,22 @@ class MenuState:
 
         if self.manager.has_active_game():
             self.buttons.append(
-                Button("Continue Game", (center_x, y), (220, 50), self.font, self.continue_game)
+                Button(ui.BUTTON_CONTINUE, (center_x, y), (220, 50), self.font, self.continue_game)
             )
             y += spacing
 
         self.buttons.append(
-            Button("Start Game", (center_x, y), (220, 50), self.font, self.start_game)
+            Button(ui.BUTTON_START, (center_x, y), (220, 50), self.font, self.start_game)
         )
         y += spacing
 
         self.buttons.append(
-            Button("Scoreboard", (center_x, y), (220, 50), self.font, self.scoreboard)
+            Button(ui.BUTTON_SCOREBOARD, (center_x, y), (220, 50), self.font, self.scoreboard)
         )
         y += spacing
 
         self.buttons.append(
-            Button("Quit", (center_x, y), (220, 50), self.font, self.quit_game)
+            Button(ui.BUTTON_QUIT, (center_x, y), (220, 50), self.font, self.quit_game)
         )
 
     def start_game(self):
@@ -65,7 +66,7 @@ class MenuState:
     def draw(self, screen, clock):
         screen.fill((20, 20, 20))
 
-        title = self.font.render("Platformer Game", True, (255, 255, 255))
+        title = self.font.render(ui.MENU_TITLE, True, (255, 255, 255))
         title_rect = title.get_rect(center=(screen.get_width() // 2, 120))
         screen.blit(title, title_rect)
 

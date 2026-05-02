@@ -1,5 +1,6 @@
 import pygame
 from game.ui.button import Button
+import ui_text as ui
 
 
 class GameCompletedState:
@@ -8,7 +9,7 @@ class GameCompletedState:
         self.font = font
 
         self.button = Button(
-            "Back to Menu",
+            ui.BUTTON_BACK_TO_MENU,
             (300, 320),
             (200, 50),
             font,
@@ -32,7 +33,7 @@ class GameCompletedState:
         center_x = screen.get_width() // 2
         center_y = screen.get_height() // 2
 
-        text = self.font.render("Game Completed!", True, (255, 255, 255))
+        text = self.font.render(ui.GAME_COMPLETED_TITLE, True, (255, 255, 255))
         text_rect = text.get_rect(center=(center_x, center_y - 80))
         screen.blit(text, text_rect)
 
