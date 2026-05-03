@@ -5,7 +5,9 @@ class LevelManager:
     LEVELS = [
         "maps/testMap.tmx",
         "maps/level2.tmx",
-        "maps/level3.tmx"
+        "maps/level3.tmx",
+        "maps/level4.tmx",
+        "maps/level5.tmx",
     ]
 
     def __init__(self):

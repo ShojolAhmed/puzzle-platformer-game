@@ -13,6 +13,12 @@ class Player:
 
         self.image = self.idle_frames[0]
 
+        self.coyote_time = 0
+        self.max_coyote_time = 6  # frames (~0.1 sec at 60 FPS)
+
+        self.jump_buffer_time = 0
+        self.max_jump_buffer_time = 6  # ~0.1 sec
+
         self.x = 100
         self.y = 400
 
@@ -29,10 +35,8 @@ class Player:
     
     def handle_events(self, event):
         if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_SPACE and self.on_ground:
-                self.vel_y = settings.JUMP_FORCE
-                self.on_ground = False
-                self.moving = True
+            if event.key == pygame.K_SPACE:
+                self.jump_buffer_time = self.max_jump_buffer_time
 
     def is_moving(self):
         if self.vel_x > 1 or self.vel_x < -1:
@@ -42,68 +46,92 @@ class Player:
     def update(self, tiles, map_width, map_height):
         keys = pygame.key.get_pressed()
 
-        # self.vel_x = 0
+        # =========================
+        # TIMER UPDATES
+        # =========================
+        self.coyote_time = max(0, self.coyote_time - 1)
+        self.jump_buffer_time = max(0, self.jump_buffer_time - 1)
+
         self.moving = False
 
+        # =========================
+        # HORIZONTAL MOVEMENT
+        # =========================
         if keys[pygame.K_a] or keys[pygame.K_LEFT]:
             self.vel_x = -settings.SPEED
             self.facing_right = False
             self.moving = True
+
         elif keys[pygame.K_d] or keys[pygame.K_RIGHT]:
             self.vel_x = settings.SPEED
             self.facing_right = True
             self.moving = True
+
         else:
             if self.on_ground:
                 self.vel_x *= 0.7
             else:
                 self.vel_x *= 0.95
-        # print(self.vel_y)
 
-        # if keys[pygame.K_SPACE] and self.on_ground:
-        #     self.vel_y = settings.JUMP_FORCE
-        #     self.on_ground = False
-
+        # =========================
+        # GRAVITY
+        # =========================
         self.vel_y += settings.GRAVITY
 
-        # Horizontal Collisions
+        # =========================
+        # APPLY HORIZONTAL COLLISION
+        # =========================
         self.rect.x += self.vel_x
+
         for tile in tiles:
             if self.rect.colliderect(tile.rect):
-                if self.vel_x > 0:  # moving right
+                if self.vel_x > 0:
                     self.rect.right = tile.rect.left
-                elif self.vel_x < 0:  # moving left
+                elif self.vel_x < 0:
                     self.rect.left = tile.rect.right
-        
-        # Vertical Collisions
+
+        # =========================
+        # APPLY VERTICAL MOVEMENT
+        # =========================
         self.rect.y += self.vel_y
+
+        # was_on_ground = self.on_ground
         self.on_ground = False
+
         for tile in tiles:
             if self.rect.colliderect(tile.rect):
+
                 if self.vel_y > 0:  # falling
                     self.rect.bottom = tile.rect.top
                     self.vel_y = 0
                     self.on_ground = True
 
+                    # reset coyote time
+                    self.coyote_time = self.max_coyote_time
+
                 elif self.vel_y < 0:  # hitting ceiling
                     self.rect.top = tile.rect.bottom
                     self.vel_y = 0
 
+        # =========================
+        # BUFFERED + COYOTE JUMP EXECUTION
+        # =========================
+        if self.jump_buffer_time > 0 and self.coyote_time > 0:
+            self.vel_y = settings.JUMP_FORCE
+            self.on_ground = False
+            self.coyote_time = 0
+            self.jump_buffer_time = 0
+
+        # =========================
+        # WORLD BOUNDS
+        # =========================
         self.x = self.rect.x
         self.y = self.rect.y
 
-        # Prevent falling below map
-        # if self.rect.bottom > map_height:
-        #     self.rect.bottom = map_height
-        #     self.vel_y = 0
-        #     self.on_ground = True
-
-        # Prevent going above map
         if self.rect.top < 0:
             self.rect.top = 0
             self.vel_y = 0
 
-        # Prevent going outside left/right
         if self.rect.left < 0:
             self.rect.left = 0
             self.vel_x = 0
@@ -112,6 +140,9 @@ class Player:
             self.rect.right = map_width
             self.vel_x = 0
 
+        # =========================
+        # ANIMATION
+        # =========================
         self.animate()
 
     def animate(self):
