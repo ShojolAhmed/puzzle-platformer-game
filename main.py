@@ -22,7 +22,7 @@ manager = StateManager()
 # Add states
 manager.add("play", lambda: PlayState(manager, Player(), LevelManager(), font))
 manager.add("menu", lambda: MenuState(manager, font, screen))
-manager.add("game_completed", lambda: GameCompletedState(manager, font))
+manager.add("game_completed", lambda: GameCompletedState(manager, font, screen))
 
 manager.set_state("menu")  # start in menu
 
