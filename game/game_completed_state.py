@@ -16,10 +16,10 @@ class GameCompletedState(AnimatedState):
         center_y = screen.get_height() // 2
 
         self.button = Button(
-            "Back to Menu",
+            ui.BUTTON_BACK_TO_MENU,
             (center_x, center_y + 80),
             (260, 55),
-            font,
+            font.ui_medium,
             self.go_to_menu
         )
 
@@ -42,7 +42,7 @@ class GameCompletedState(AnimatedState):
         center_y = screen.get_height() // 2
 
         # TITLE with slide animation
-        text = self.font.render("Game Completed!", True, (255, 255, 255))
+        text = self.font.title.render(ui.GAME_COMPLETED_TITLE, True, (255, 255, 255))
         text_rect = text.get_rect(center=(center_x, center_y - 100 - self.slide_offset))
         screen.blit(text, text_rect)
 
@@ -55,3 +55,18 @@ class GameCompletedState(AnimatedState):
         fade.set_alpha(255 - self.alpha)
         fade.fill((0, 0, 0))
         screen.blit(fade, (0, 0))
+
+        # speedrun time
+        t = self.manager.final_time
+
+        minutes = int(t // 60)
+        seconds = int(t % 60)
+        ms = int((t - int(t)) * 100)
+
+        time_text = self.font.timer.render(
+            f"Time: {minutes:02}:{seconds:02}.{ms:02}",
+            True,
+            (200, 200, 200)
+        )
+
+        screen.blit(time_text, (center_x - 80, center_y - 20))

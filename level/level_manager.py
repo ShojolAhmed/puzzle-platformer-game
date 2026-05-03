@@ -4,6 +4,7 @@ from level.level_loader import load_level
 class LevelManager:
     LEVELS = [
         "maps/testMap.tmx",
+        "maps/level1.tmx",
         "maps/level2.tmx",
         "maps/level3.tmx",
         "maps/level4.tmx",

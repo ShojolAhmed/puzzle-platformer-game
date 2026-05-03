@@ -57,7 +57,7 @@ class MenuState(AnimatedState):
                     text_map[text_key],
                     (center_x, y + button_h // 2),
                     (button_w, button_h),
-                    self.font,
+                    self.font.ui_medium,
                     callback
                 )
             )
@@ -67,6 +67,8 @@ class MenuState(AnimatedState):
         self.manager.set_play_state(play)
 
     def continue_game(self):
+        play = self.manager.play_state
+        play.timer.start()  # resume timer
         self.manager.continue_game()
 
     def scoreboard(self):
@@ -99,7 +101,7 @@ class MenuState(AnimatedState):
         center_x = screen.get_width() // 2
 
         # ---------- TITLE ----------
-        title = self.font.render(ui.MENU_TITLE, True, (255, 255, 255))
+        title = self.font.title.render(ui.MENU_TITLE, True, (255, 255, 255))
         title_rect = title.get_rect(center=(center_x, 120 - self.slide_offset))
         screen.blit(title, title_rect)
 

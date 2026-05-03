@@ -3,6 +3,7 @@ import settings
 
 from systems.collision import is_on_platform
 from systems.reset import reset_player
+from systems.speedrun_timer import SpeedrunTimer
 
 
 class PlayState:
@@ -11,6 +12,9 @@ class PlayState:
         self.player = player
         self.level_manager = level_manager
         self.font = font
+
+        self.timer = SpeedrunTimer()
+        self.timer.start()
 
         # spawn player
         spawn = self.level_manager.data["spawn"]
@@ -23,6 +27,7 @@ class PlayState:
 
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
+                    self.timer.stop()  # pause timer
                     self.manager.set_state("menu")
 
             # DEBUG CONTROLS
@@ -45,6 +50,8 @@ class PlayState:
                     reset_player(self.player, spawn)
 
     def update(self):
+        self.timer.update()
+
         data = self.level_manager.data
 
         collision_tiles = data["collision_tiles"]
@@ -108,13 +115,44 @@ class PlayState:
 
         self.player.draw(screen)
 
+        t = self.timer.get_time()
+
+        minutes = int(t // 60)
+        seconds = int(t % 60)
+        ms = int((t - int(t)) * 100)
+
+        timer_text = self.font.timer.render(
+            f"{minutes:02}:{seconds:02}.{ms:02}",
+            True,
+            (255, 255, 255)
+        )
+
+        timer_rect = timer_text.get_rect(
+            midtop=(settings.WIDTH // 2, 10)
+        )
+
+        padding = 8
+
+        bg_rect = timer_rect.inflate(padding * 2, padding)
+
+        bg = pygame.Surface(bg_rect.size)
+        bg.set_alpha(120)
+        bg.fill((0, 0, 0))
+        screen.blit(bg, bg_rect.topleft)
+
+        screen.blit(timer_text, timer_rect)
+
         if settings.DEBUG:
             fps = int(clock.get_fps())
-            screen.blit(self.font.render(f"FPS: {fps}", True, (255, 255, 255)), (10, 10))
+            screen.blit(self.font.timer.render(f"FPS: {fps}", True, (255, 255, 255)), (10, 10))
 
     def next_level(self):
         if not self.level_manager.next_level():
-            print("Game Completed!")
+            self.timer.stop()
+
+            final_time = self.timer.get_time()
+            self.manager.final_time = final_time
+
             self.manager.set_state("game_completed")
             return
 

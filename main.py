@@ -1,6 +1,7 @@
 import pygame
 import settings
 import assets
+from fonts import Fonts
 
 from player import Player
 from level.level_manager import LevelManager
@@ -17,12 +18,14 @@ font = pygame.font.SysFont("Arial", 30)
 
 assets.load_assets()
 
+fonts = Fonts()
+
 manager = StateManager()
 
 # Add states
-manager.add("play", lambda: PlayState(manager, Player(), LevelManager(), font))
-manager.add("menu", lambda: MenuState(manager, font, screen))
-manager.add("game_completed", lambda: GameCompletedState(manager, font, screen))
+manager.add("play", lambda: PlayState(manager, Player(), LevelManager(), fonts))
+manager.add("menu", lambda: MenuState(manager, fonts, screen))
+manager.add("game_completed", lambda: GameCompletedState(manager, fonts, screen))
 
 manager.set_state("menu")  # start in menu
 
