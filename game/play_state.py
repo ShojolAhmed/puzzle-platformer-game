@@ -1,7 +1,6 @@
 import pygame
 import settings
 
-from systems.collision import is_on_platform
 from systems.reset import reset_player
 from systems.speedrun_timer import SpeedrunTimer
 
@@ -60,37 +59,41 @@ class PlayState:
         platforms = data["platforms"]
         spawn = data["spawn"]
 
-        # Platforms
+        # =========================
+        # UPDATE PLATFORMS FIRST
+        # =========================
         for p in platforms:
             p.update()
 
-        for p in platforms:
-            if is_on_platform(self.player, p):
-                dx, dy = p.get_movement()
-                self.player.rect.x += dx
-                self.player.rect.y += dy
-
-        # Doors
+        # =========================
+        # DOORS
+        # =========================
         for door in doors:
             door.update(self.player, lambda: self.next_level())
 
-        # Player update
+        # =========================
+        # PLAYER UPDATE
+        # (platforms passed separately)
+        # =========================
         colliders = (
             collision_tiles
             + [d for d in doors if not d.is_open]
-            + platforms
         )
 
-        self.player.update(colliders, settings.WIDTH, settings.HEIGHT)
+        self.player.update(colliders, platforms, settings.WIDTH, settings.HEIGHT)
 
-        # Killing zones
+        # =========================
+        # KILLING ZONES
+        # =========================
         for zone in killing_zones:
             if self.player.rect.colliderect(zone):
                 self.level_manager.reload()
                 reset_player(self.player, spawn)
                 break
 
-        # Keys
+        # =========================
+        # KEYS
+        # =========================
         for key in data["keys"][:]:
             if self.player.rect.colliderect(key["rect"]):
                 self.player.has_key = True
@@ -115,6 +118,9 @@ class PlayState:
 
         self.player.draw(screen)
 
+        # =========================
+        # TIMER UI
+        # =========================
         t = self.timer.get_time()
 
         minutes = int(t // 60)
@@ -132,7 +138,6 @@ class PlayState:
         )
 
         padding = 8
-
         bg_rect = timer_rect.inflate(padding * 2, padding)
 
         bg = pygame.Surface(bg_rect.size)
@@ -142,9 +147,15 @@ class PlayState:
 
         screen.blit(timer_text, timer_rect)
 
+        # =========================
+        # DEBUG
+        # =========================
         if settings.DEBUG:
             fps = int(clock.get_fps())
-            screen.blit(self.font.timer.render(f"FPS: {fps}", True, (255, 255, 255)), (10, 10))
+            screen.blit(
+                self.font.timer.render(f"FPS: {fps}", True, (255, 255, 255)),
+                (10, 10)
+            )
 
     def next_level(self):
         if not self.level_manager.next_level():
