@@ -116,6 +116,15 @@ class PlayState:
         for door in data["doors"]:
             door.draw(screen)
 
+        for t in data["texts"]:
+            if not self.player.has_key and not t["hidden"]:
+                screen.blit(self.font.timer.render(t["text"], True, (255, 255, 255)), t["pos"])
+                break
+            if t["hidden"]:
+                screen.blit(self.font.timer.render(t["text"], True, (255, 255, 255)), t["pos"])
+
+            # pygame.draw.circle(screen, (255, 0, 0), t["pos"], 5)
+
         self.player.draw(screen)
 
         # =========================

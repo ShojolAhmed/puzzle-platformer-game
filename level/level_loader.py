@@ -14,6 +14,7 @@ def load_level(path):
     doors = []
     killing_zones = []
     moving_platforms = []
+    text_objects = []
     player_spawn = (100, 400)
 
     tmx_data = pytmx.load_pygame(path)
@@ -106,6 +107,23 @@ def load_level(path):
                         )
                     )
 
+            if layer.name == "Text":
+                for obj in layer:
+                    is_hidden = False
+                    text_value = obj.properties.get("message")
+                    if obj.name == "hidden":
+                        is_hidden = True
+
+                    if text_value:
+                        x = int(obj.x * scale)
+                        y = int(obj.y * scale)
+
+                        text_objects.append({
+                            "text": text_value,
+                            "pos": (x, y),
+                            "hidden": is_hidden
+                        })
+
     return {
         "draw_tiles": draw_tiles,
         "collision_tiles": collision_tiles,
@@ -113,5 +131,7 @@ def load_level(path):
         "doors": doors,
         "killing_zones": killing_zones,
         "platforms": moving_platforms,
-        "spawn": player_spawn
+        "spawn": player_spawn,
+
+        "texts": text_objects
     }
