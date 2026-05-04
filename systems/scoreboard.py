@@ -22,12 +22,13 @@ class Scoreboard:
     # -------------------------
     # SAVE SCORE
     # -------------------------
-    def add_score(self, name, time):
+    def add_score(self, name, time, run_id):
         scores = self.load()
 
         scores.append({
             "name": name,
-            "time": round(time, 2)
+            "time": round(time, 2),
+            "run_id": run_id
         })
 
         scores.sort(key=lambda x: x["time"])

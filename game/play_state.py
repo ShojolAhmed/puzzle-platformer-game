@@ -164,7 +164,7 @@ class PlayState:
             final_time = self.timer.get_time()
             self.manager.final_time = final_time
 
-            self.manager.set_state("game_completed")
+            self.manager.set_state("name_input")
             return
 
         reset_player(self.player, self.level_manager.data["spawn"])

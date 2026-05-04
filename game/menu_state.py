@@ -63,6 +63,7 @@ class MenuState(AnimatedState):
             )
 
     def start_game(self):
+        self.manager.start_new_run()
         play = self.manager.states["play"]()
         self.manager.set_play_state(play)
 

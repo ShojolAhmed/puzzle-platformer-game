@@ -1,9 +1,16 @@
+import uuid
+
 class StateManager:
     def __init__(self):
         self.states = {}
         self.current = None
 
-        self.play_state = None  # ← store active game
+        self.play_state = None
+
+        self.current_run_id = None
+
+    def start_new_run(self):
+        self.current_run_id = str(uuid.uuid4())
 
     def add(self, name, factory):
         self.states[name] = factory

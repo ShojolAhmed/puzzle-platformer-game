@@ -12,9 +12,9 @@ class GameCompletedState(AnimatedState):
         self.font = font
         self.screen = screen
 
-        self.entering_name = True
-        self.player_name = ""
-        self.saved = False
+        # self.entering_name = True
+        # self.player_name = ""
+        # self.saved = False
         self.scoreboard = scoreboard
 
         center_x = screen.get_width() // 2
@@ -32,31 +32,18 @@ class GameCompletedState(AnimatedState):
         self.manager.clear_game()
         self.manager.set_state("menu")
 
-    def save_score(self):
-        if not self.saved:
-            self.scoreboard.add_score(
-                self.player_name,
-                self.manager.final_time
-            )
-            self.saved = True
-            self.entering_name = False
+    # def save_score(self):
+    #     if not self.saved:
+    #         self.scoreboard.add_score(
+    #             self.player_name,
+    #             self.manager.final_time
+    #         )
+    #         self.saved = True
+    #         self.entering_name = False
 
     def handle_events(self, events):
         for event in events:
             self.button.handle_event(event)
-
-            if self.entering_name:
-                if event.type == pygame.KEYDOWN:
-
-                    if event.key == pygame.K_RETURN and self.player_name:
-                        self.save_score()
-
-                    elif event.key == pygame.K_BACKSPACE:
-                        self.player_name = self.player_name[:-1]
-
-                    else:
-                        if len(self.player_name) < 12 and event.unicode.isprintable():
-                            self.player_name += event.unicode
 
     def update(self):
         self.update_animation()
@@ -66,65 +53,106 @@ class GameCompletedState(AnimatedState):
         screen.fill((10, 10, 18))
 
         center_x = screen.get_width() // 2
-        center_y = screen.get_height() // 2
+        screen_h = screen.get_height()
 
-        # TITLE with slide animation
-        text = self.font.title.render(ui.GAME_COMPLETED_TITLE, True, (255, 255, 255))
-        text_rect = text.get_rect(center=(center_x, center_y - 100 - self.slide_offset))
-        screen.blit(text, text_rect)
+        # =========================
+        # SAFE LAYOUT AREA
+        # =========================
+        top_y = 100 - self.slide_offset
 
-        # button animation offset
-        self.button.rect.center = (center_x, center_y + 60 + self.slide_offset)
+        # dynamic safe bottom (IMPORTANT FIX)
+        bottom_margin = 80
+        max_button_y = screen_h - bottom_margin
+
+        spacing = 45
+
+        # =========================
+        # TITLE
+        # =========================
+        title = self.font.title.render("Top Runs", True, (255, 255, 255))
+        title_rect = title.get_rect(center=(center_x, top_y))
+        screen.blit(title, title_rect)
+
+        # spacing based on title height (clean + scalable)
+        title_spacing = 45
+
+        # =========================
+        # SUBTITLE
+        # =========================
+        subtitle = self.font.timer.render(
+            "Try to beat the top score!",
+            True,
+            (160, 160, 160)
+        )
+
+        subtitle_y = top_y + title_spacing
+
+        subtitle_rect = subtitle.get_rect(center=(center_x, subtitle_y))
+        screen.blit(subtitle, subtitle_rect)
+
+        # =========================
+        # LEADERBOARD PANEL START
+        # =========================
+        top_scores = self.scoreboard.get_top()
+
+        panel_start_y = top_y + 90
+        line_height = 30
+
+        # draw soft background panel (optional but huge visual improvement)
+        panel_height = min(250, len(top_scores) * line_height + 40)
+
+        panel_rect = pygame.Rect(
+            center_x - 300,
+            panel_start_y - 20,
+            600,
+            panel_height
+        )
+
+        panel = pygame.Surface(panel_rect.size)
+        panel.set_alpha(120)
+        panel.fill((30, 30, 45))
+        screen.blit(panel, panel_rect.topleft)
+
+        # =========================
+        # SCORES
+        # =========================
+        for i, s in enumerate(top_scores[:8]):
+
+            # check if this is the current run
+            is_current_run = s.get("run_id") == self.manager.current_run_id
+
+            if is_current_run:
+                color = (255, 220, 120)  # highlight (gold-ish)
+            else:
+                color = (220, 220, 220)
+
+            label = " (YOU)" if is_current_run else ""
+
+            entry = self.font.timer.render(
+                f"{i + 1}. {s['name']}{label} - {s['time']:.2f}s",
+                True,
+                color
+            )
+
+            y = panel_start_y + i * line_height
+            entry_rect = entry.get_rect(center=(center_x, y))
+            screen.blit(entry, entry_rect)
+
+        # =========================
+        # BUTTON (SAFE POSITIONING)
+        # =========================
+        button_y = min(
+            panel_start_y + len(top_scores[:8]) * line_height + 60,
+            max_button_y
+        )
+
+        self.button.rect.center = (center_x, button_y + self.slide_offset)
         self.button.draw(screen)
 
-        # fade-in overlay (IMPORTANT)
+        # =========================
+        # FADE
+        # =========================
         fade = pygame.Surface(screen.get_size())
         fade.set_alpha(255 - self.alpha)
         fade.fill((0, 0, 0))
         screen.blit(fade, (0, 0))
-
-        # speedrun time
-        t = self.manager.final_time
-
-        minutes = int(t // 60)
-        seconds = int(t % 60)
-        ms = int((t - int(t)) * 100)
-
-        time_text = self.font.timer.render(
-            f"Time: {minutes:02}:{seconds:02}.{ms:02}",
-            True,
-            (200, 200, 200)
-        )
-
-        screen.blit(time_text, (center_x - 80, center_y - 20))
-
-
-
-        top_scores = self.scoreboard.get_top()
-
-        # -------------------------
-        # NAME INPUT
-        # -------------------------
-        if self.entering_name:
-            prompt = self.font.ui_medium.render(
-                "Enter Name: " + self.player_name,
-                True,
-                (255, 255, 255)
-            )
-            screen.blit(prompt, (center_x - 120, center_y + 30))
-
-        else:
-            # -------------------------
-            # TOP N LEADERBOARD
-            # -------------------------
-            y_offset = 40
-            title = self.font.ui_medium.render("Top Runs", True, (255, 255, 255))
-            screen.blit(title, (center_x - 60, center_y + 40))
-
-            for i, s in enumerate(top_scores):
-                text = self.font.timer.render(
-                    f"{i + 1}. {s['name']} - {s['time']:.2f}s",
-                    True,
-                    (200, 200, 200)
-                )
-                screen.blit(text, (center_x - 100, center_y + 80 + i * 25))
