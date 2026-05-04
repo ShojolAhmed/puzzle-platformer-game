@@ -72,7 +72,7 @@ class MenuState(AnimatedState):
         self.manager.continue_game()
 
     def scoreboard(self):
-        print("Scoreboard placeholder")
+        self.manager.set_state("scoreboard")
 
     def quit_game(self):
         pygame.quit()

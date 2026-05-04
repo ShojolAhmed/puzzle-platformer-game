@@ -2,6 +2,7 @@ import pygame
 import settings
 import assets
 from fonts import Fonts
+from game.states.scoreboard_state import ScoreboardState
 
 from player import Player
 from level.level_manager import LevelManager
@@ -9,6 +10,7 @@ from game.state_manager import StateManager
 from game.play_state import PlayState
 from game.menu_state import MenuState
 from game.game_completed_state import GameCompletedState
+from systems.scoreboard import Scoreboard
 
 pygame.init()
 
@@ -22,10 +24,13 @@ fonts = Fonts()
 
 manager = StateManager()
 
+scoreboard = Scoreboard()
+
 # Add states
 manager.add("play", lambda: PlayState(manager, Player(), LevelManager(), fonts))
 manager.add("menu", lambda: MenuState(manager, fonts, screen))
-manager.add("game_completed", lambda: GameCompletedState(manager, fonts, screen))
+manager.add("game_completed", lambda: GameCompletedState(manager, fonts, screen, scoreboard))
+manager.add("scoreboard", lambda: ScoreboardState(manager, fonts, screen, scoreboard))
 
 manager.set_state("menu")  # start in menu
 
