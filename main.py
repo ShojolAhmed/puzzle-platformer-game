@@ -14,6 +14,7 @@ from game.game_completed_state import GameCompletedState
 from systems.scoreboard import Scoreboard
 
 pygame.init()
+pygame.key.set_repeat(300, 50)
 
 screen = pygame.display.set_mode((settings.WIDTH, settings.HEIGHT))
 clock = pygame.time.Clock()
