@@ -69,7 +69,7 @@ class GameCompletedState(AnimatedState):
         # =========================
         # TITLE
         # =========================
-        title = self.font.title.render("Top Runs", True, (255, 255, 255))
+        title = self.font.title.render(ui.TOP_RUNS_TITLE, True, (255, 255, 255))
         title_rect = title.get_rect(center=(center_x, top_y))
         screen.blit(title, title_rect)
 
@@ -80,7 +80,7 @@ class GameCompletedState(AnimatedState):
         # SUBTITLE
         # =========================
         subtitle = self.font.timer.render(
-            "Try to beat the top score!",
+            ui.TOP_RUNS_SUBTITLE,
             True,
             (160, 160, 160)
         )
@@ -139,7 +139,7 @@ class GameCompletedState(AnimatedState):
             screen.blit(entry, entry_rect)
 
         # =========================
-        # BUTTON (SAFE POSITIONING)
+        # BUTTON
         # =========================
         button_y = min(
             panel_start_y + len(top_scores[:8]) * line_height + 60,

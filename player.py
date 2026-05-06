@@ -175,7 +175,7 @@ class Player:
         self.animate()
 
     def animate(self):
-        # AIR animation (optional, you commented it before)
+        # AIR animation
         if not self.on_ground:
             if self.vel_y < 0:
                 self.image = self.jump_up_frame

@@ -89,7 +89,7 @@ class NameInputState(AnimatedState):
         # =========================
         title_y = start_y
 
-        title = self.font.title.render("Game Completed", True, (255, 255, 255))
+        title = self.font.title.render(ui.GAME_COMPLETED_TITLE, True, (255, 255, 255))
         title_rect = title.get_rect(center=(center_x, title_y))
         screen.blit(title, title_rect)
 
@@ -147,7 +147,7 @@ class NameInputState(AnimatedState):
         if self.name:
             display_name = self.name + ("|" if show_cursor else "")
         else:
-            display_name = "Enter your name..."
+            display_name = ui.ENTER_NAME
 
         color = (255, 255, 255) if self.name else (120, 120, 120)
 
@@ -160,7 +160,7 @@ class NameInputState(AnimatedState):
         # HINT
         # =========================
         hint = self.font.timer.render(
-            "Press Enter to confirm",
+            ui.NAME_CONFIRM,
             True,
             (160, 160, 160)
         )

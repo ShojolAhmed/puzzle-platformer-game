@@ -109,15 +109,15 @@ class MenuState(AnimatedState):
         # ---------- SUBTITLE ----------
         subtitle_font = pygame.font.Font(None, 28)
         subtitle = subtitle_font.render(
-            "Press ESC in-game to return here",
+            ui.MENU_SUBTITLE,
             True,
             (160, 160, 160)
         )
         subtitle_rect = subtitle.get_rect(center=(center_x, 170 - self.slide_offset))
         screen.blit(subtitle, subtitle_rect)
 
-        # ---------- BUTTON AREA START (IMPORTANT FIX) ----------
-        start_y = 260  # 👈 reserved space below title/subtitle
+        # ---------- BUTTON AREA START ----------
+        start_y = 260
 
         # reposition button block safely
         spacing = 75
